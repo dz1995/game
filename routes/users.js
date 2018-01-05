@@ -55,8 +55,8 @@ router.post("/register", function (req, res) {
 });
 
 router.post("/login", function (req, res) {
-  var md5 = crypto.createHash('md5');
-  var password = md5.update(req.body.password).digest('base64');
+  // var md5 = crypto.createHash('md5');
+  var password = req.body.password  // md5.update(req.body.password).digest('base64');
   User.getUserByName(req.body.username, function (err, result) {
     if (result.length ==0) return res.send({ "error": 403, "message": "用户名不存在! " });
     if (result[0].password != password) return res.send({ "error": 403, "message": "密码错误！" });
@@ -90,6 +90,7 @@ router.post("/updatePassword", function (req, res) {
     })
   });
 });
+
 router.post("/updateUser", checkRootLogin);
 router.post("/updateUser", function (req, res) {
   var newUser = new User({
@@ -101,6 +102,7 @@ router.post("/updateUser", function (req, res) {
     res.send({ "success": true });
   });
 });
+
 router.post("/queryUser", checkRootLogin);
 router.get("/queryUser", function (req, res) {
   var page = new Page({
@@ -118,6 +120,7 @@ router.get("/queryUser", function (req, res) {
     });
   });
 });
+
 router.get("/queryUserMessage", checkUserLogin);
 router.get("/queryUserMessage", function (req, res) {
   User.queryUserMessage(req.session.user.id, function (err, data) {
@@ -125,6 +128,7 @@ router.get("/queryUserMessage", function (req, res) {
     res.send(data);
   });
 });
+
 var createCode = function () {
   var code = "";
   var codeLength = 6;//验证码的长度   
@@ -135,11 +139,13 @@ var createCode = function () {
   }
   return code;
 }
+
 router.get("/vCode", function (req, res) {
   var code = createCode();
   req.session.vCode = code;
   res.send({ "vCode": code });
 });
+
 router.get("/vCodeForUpdatePassword", function (req, res) {
   var code = createCode();
   req.session.vCodePassword = code;
